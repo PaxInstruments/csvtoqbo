@@ -11,16 +11,6 @@ class amazonpayments(AbstractProvider):
 			self.__providerID = 'amazon'
 			self.__providerName = 'Amazon Payments'
 
-	def getID(self):
-		return self.__providerID
-
-	def getName(self):		
-		return self.__providerName
-
-	@staticmethod
-	def getStatus(self,row):
-		return row.get('Status')
-
 	@staticmethod
 	def getDatePosted(self, row):
 		return row.get('Date')
@@ -34,10 +24,24 @@ class amazonpayments(AbstractProvider):
 		return row.get('To/From')
 
 	@staticmethod
+	def getTxnName(self,row):
+		return row.get('Name')
+
+	@staticmethod
+	def getStatus(self,row):
+		return row.get('Status')
+
+	@staticmethod
 	def getTxnAmount(self,row):
 		return row.get('Amount')
 
 	@staticmethod
-	def getTxnName(self,row):
-		return row.get('Name')
+	def getFeeAmount(self,row):
+		return row.get('Fee')
+
+	def getID(self):
+		return self.__providerID
+
+	def getName(self):		
+		return self.__providerName
 

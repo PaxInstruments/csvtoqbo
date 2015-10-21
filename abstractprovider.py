@@ -6,16 +6,6 @@ class AbstractProvider:
 	__providerID = ''
 	__providerName = ''
 
-	def getID( self ):
-		raise NotImplementedError( "Method getProviderID not implemented." )
-
-	def getName(self):
-		raise NotImplementedError( "Method getName not implemented." )
-
-	@staticmethod
-	def getStatus(self,row):
-		raise NotImplementedError( "Method getStatus not implemented." )
-
 	@staticmethod
 	def getDatePosted(self, row):
 		raise NotImplementedError( "Method getDatePosted not implemented." )
@@ -29,10 +19,24 @@ class AbstractProvider:
 		raise NotImplementedError( "Method getToFrom not implemented." )
 
 	@staticmethod
+	def getTxnName(self,row):
+		raise NotImplementedError( "Method getTxnName not implemented." )
+
+	@staticmethod
+	def getStatus(self,row):
+		raise NotImplementedError( "Method getStatus not implemented." )
+
+	@staticmethod
 	def getTxnAmount(self,row):
 		raise NotImplementedError( "Method getTxnAmount not implemented." )
 
 	@staticmethod
-	def getTxnName(self,row):
-		raise NotImplementedError( "Method getTxnName not implemented." )
+	def getFeeAmount(self,row):
+		raise NotImplementedError( "Method getFeeAmount not implemented." )
+
+	def getID( self ):
+		raise NotImplementedError( "Method getProviderID not implemented." )
+
+	def getName(self):
+		raise NotImplementedError( "Method getName not implemented." )
 

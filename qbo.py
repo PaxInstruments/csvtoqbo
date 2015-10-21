@@ -71,11 +71,11 @@ class qbo:
 		return self.__TRANSACTION_END
 	
 	#	method to validate paramters used to submit transactions
-	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name):
+	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
 
 		if str.lower(status) != 'completed':
 			#log status failure
-			logging.info("Transaction status [" + status + "] invalid.")
+			logging.info("Transaction [" + str(txnCount)  + "] status [" + status + "] invalid.")
 			raise Exception("Transaction status [" + status + "] invalid.")
 
 		#if type(datetime.strptime(str(date_posted), '%m/%d/%Y')) is not datetime:
@@ -83,31 +83,32 @@ class qbo:
 		#	raise Exception("Transaction posted date [" + date_posted + "] invalid.")
 
 		if str.lower(txn_type) not in ('payment','refund','withdrawal', 'withdraw funds'):
-			logging.info("Transaction type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Withdraw Funds', or 'Withdrawal'.")
+			logging.info("Transaction [" + str(txnCount)  + "] type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Withdraw Funds', or 'Withdrawal'.")
 			raise Exception("Transaction type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Withdraw Funds', or 'Withdrawal'.")
 
 		if str.lower(to_from_flag) not in ('to', 'from'):
-			logging.info("Transaction 'To/From' field [" + to_from_flag + "] invalid.")
+			logging.info("Transaction [" + str(txnCount)  + "] 'To/From' field [" + to_from_flag + "] invalid.")
 			raise Exception("Transaction 'To/From' field [" + to_from_flag + "] invalid.")
 
 		#logical test of txn_type and to_from_flag
-		if ((str.lower(txn_type) == 'refund' and str.lower(to_from_flag) != 'to') or (str.lower(txn_type) == 'payment' and str.lower(to_from_flag) != 'from')):
-			logging.info("Transaction type inconsistent with 'To/From' field.")
-			raise Exception("Transaction type inconsistent with 'To/From' field.")
+		#This test does not appear to be valid. I have many payments from a people and many payment to kickstarter.
+		#if ((str.lower(txn_type) == 'refund' and str.lower(to_from_flag) != 'to') or (str.lower(txn_type) == 'payment' and str.lower(to_from_flag) != 'from')):
+		#	logging.info("Transaction type inconsistent with 'To/From' field.")
+		#	raise Exception("Transaction type inconsistent with 'To/From' field.")
 
 		if len(name) == 0 or not name:
-			logging.info("Transaction name empty or null.")
+			logging.info("Transaction  [" + str(txnCount)  + "] name empty or null.")
 			raise Exception("Transaction name empty or null.")
 
 		return True
 
 	#	Add transaction takes in param values uses the required formatting QBO transactions
 	#	and pushes to list
-	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name):
+	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
 		
 		try:
 			#	Validating param values prior to committing transaction
-			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name)
+			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount)
 		except:
 			raise Exception
 
@@ -127,23 +128,23 @@ class qbo:
 		rec_date = datetime.strptime(day+"/"+month+"/"+date_array[2], '%m/%d/%Y')
 		rec_date = rec_date.strftime('%Y%m%d%H%M%S') + '.000[-5]'
 
-		dtposted = '<DTPOSTED>' + rec_date
-		memo = '<MEMO>' + str(txn_type)
+		dtposted = '						<DTPOSTED>' + rec_date
+		memo = '						<MEMO>' + str(txn_type)
 
-		if str.lower(txn_type) == 'payment':
-			trtype = '<TRNTYPE>CREDIT'
-		elif (str.lower(txn_type) == 'refund' and str.lower(to_from_flag) == 'to') or (str.lower(txn_type) in ('withdrawal','withdraw funds')):
-			trtype = '<TRNTYPE>DEBIT'
+		if (str.lower(to_from_flag) == 'from') & (str.lower(txn_type) == 'payment'):
+			trtype = '						<TRNTYPE>CREDIT'
+		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','withdrawal','withdraw funds')):
+			trtype = '						<TRNTYPE>DEBIT'
 
-		if str.lower(txn_type) in ('refund', 'withdrawal', 'withdraw funds'):
-			tramt = '<TRNAMT>-' + str(txn_amount).replace('$','')
-		else:
-			tramt = '<TRNAMT>' + str(txn_amount).replace('$','')
+		if (str.lower(to_from_flag) == 'from') & (str.lower(txn_type) == 'payment'):
+			tramt = '						<TRNAMT>' + str(txn_amount).replace('$','').replace('(','').replace(')','')
+		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','withdrawal','withdraw funds')):
+			tramt = '						<TRNAMT>-' + str(txn_amount).replace('$','').replace('(','').replace(')','')
 		
 		#tramt = '<TRNAMT>' + str(txn_amount).replace('$','')
                 
-		trname = '<NAME>' + str(name)
-		fitid = '<FITID>' + rec_date + str(1000+len(self.__transactions))[1:]
+		trname = '						<NAME>' + str(name)[:32] # This field limited to 32 characters
+		fitid = '						<FITID>' + rec_date + str(1000+len(self.__transactions))[1:]
 
 		transaction = ("" + self.__TRANSACTION_START + "\n"
 						"" + trtype + "\n"
@@ -157,7 +158,7 @@ class qbo:
 		#	Commit transaction to the document by adding to private member list object
 		self.__transactions.append(transaction)
 
-		logging.info("Transaction [" + str(self.getCount())  + "] Accepted.")
+		logging.info("Transaction [" + str(txnCount)  + "] Accepted.")
 		return True
 
 	#	get the current number of valid committed transactions

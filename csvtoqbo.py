@@ -72,7 +72,7 @@ for arg in sys.argv:
 
 					try:
                                                 #Add transaction to the qbo document
-                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name):
+                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
                                                         print('Transaction [' + str(txnCount) + '] added successfully!')
                                                         logging.info('Transaction [' + str(txnCount) + '] added successfully!')				
 
@@ -82,7 +82,7 @@ for arg in sys.argv:
                                                 lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
                                                 print(''.join('!! ' + line for line in lines))
                                                 logging.info("Transaction [" + str(txnCount) + "] excluded!")
-                                                logging.info('>> Data: ' + str(sdata))
+                                                logging.info("Transaction [" + str(txnCount) + "] Data: " + str(sdata))
                                                 pass
 
 		except:

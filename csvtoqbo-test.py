@@ -38,7 +38,7 @@ class csvtoqboTest(unittest.TestCase):
 		myQbo = qbo.qbo()
 
 		status = 'Completed'
-		date_posted = str(date.today().strftime('%b %d, %Y'))
+		date_posted = str(date.today().strftime('%m/%d/%Y'))
 		memo = 'AddTransactionTest'
 		txn_type = 'Payment'
 		to_from_flag = 'From'
@@ -54,7 +54,7 @@ class csvtoqboTest(unittest.TestCase):
 		myQbo = qbo.qbo()
 
 		status = 'Completed'
-		date_posted = str(date.today().strftime('%b %d, %Y'))
+		date_posted = str(date.today().strftime('%m/%d/%Y'))
 		memo = 'AddTransactionTest'
 		txn_type = 'Payment'
 		to_from_flag = 'From'
@@ -62,7 +62,7 @@ class csvtoqboTest(unittest.TestCase):
 		name = 'TestBuy'
 
 		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name), True)
-		self.assertEquals(len(myQbo.getDocument()), 1137)
+		self.assertEquals(len(myQbo.getDocument()), 1097)
 
 	#	Writing document of known size to file
 	def testWrite(self):
@@ -70,7 +70,7 @@ class csvtoqboTest(unittest.TestCase):
 		myQbo = qbo.qbo()
 	
 		status = 'Completed'
-		date_posted = str(date.today().strftime('%b %d, %Y'))
+		date_posted = str(date.today().strftime('%m/%d/%Y'))
 		memo = 'AddTransactionTest'
 		txn_type = 'Payment'
 		to_from_flag = 'From'
@@ -80,7 +80,7 @@ class csvtoqboTest(unittest.TestCase):
 		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name), True)
 		self.assertEquals(myQbo.Write('./csvtoqbo-test.qbo'), True)
 		statinfo = os.stat('./csvtoqbo-test.qbo')
-		self.assertEquals(statinfo.st_size, 1281)
+		self.assertEquals(statinfo.st_size, 1241)
 
 	#	Provider ID is set correctly on intialization
 	def testProviderID(self):

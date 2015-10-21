@@ -11,6 +11,11 @@
 
 from datetime import date, time
 
+INTUBID = "62160" # Bank list https://ofx-prod-filist.intuit.com/qb2600/data/fidir.txt
+BANK_ID = "999999999" # Bank routing number
+ACCOUNT_ID = "999999999999" # Account number
+ACCOUNT_TYPE = "CHECKING" # CHECKING of SAVINGS
+
 DATE_TODAY = "" + date.today().strftime('%Y%m%d%H%M%S') + ".000[-5]"
 
 HEADER = ("OFXHEADER:100\n"
@@ -32,7 +37,7 @@ HEADER = ("OFXHEADER:100\n"
 		"			</STATUS>\n"
 		"			<DTSERVER>" + DATE_TODAY + "\n"
 		"			<LANGUAGE>ENG\n"
-		"			<INTU.BID>62160\n"
+		"			<INTU.BID>" + INTUBID + "\n"
 		"		</SONRS>\n"
 		"	</SIGNONMSGSRSV1>\n"
 		"	<BANKMSGSRSV1>\n"
@@ -46,9 +51,9 @@ HEADER = ("OFXHEADER:100\n"
 		"			<STMTRS>\n"
 		"				<CURDEF>USD\n"
 		"				<BANKACCTFROM>\n"
-		"					<BANKID>999999999\n"
-		"					<ACCTID>999999999999\n"
-		"					<ACCTTYPE>CHECKING\n"
+		"					<BANKID>" + BANK_ID + "\n"
+		"					<ACCTID>" + ACCOUNT_ID + "\n"
+		"					<ACCTTYPE>" + ACCOUNT_TYPE + "\n"
 		"				</BANKACCTFROM>")
 
 BANKTRANLIST_START = "				<BANKTRANLIST>"

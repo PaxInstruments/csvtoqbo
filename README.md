@@ -1,16 +1,20 @@
-csvtoqbo
-========
+# csvtoqbo
 
 Python tool to convert CSV files generated from multiple providers to QBO format for Quickbooks
 
-Usage:
+## What you need
 
-python csvtoqbo.py \<options\> \<csvfiles\>
+- Find you bank ID number on the list located at https://ofx-prod-filist.intuit.com/qb2600/data/fidir.txt.
+- Replace the ID located in qboconst.py `INTUBID = "62160"`
 
-Example:
+## Usage
 
-python csvtoqbo.py -amazon Amazon-CSV-Test.csv
+`python csvtoqbo.py \<options\> \<csvfiles\>`
 
-Test Suite:
+### Example
+
+`python csvtoqbo.py -amazon Amazon-CSV-Test.csv`
+
+### Test Suite:
 
 python csvtoqbo-test.py

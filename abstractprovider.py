@@ -34,6 +34,14 @@ class AbstractProvider:
 	def getFeeAmount(self,row):
 		raise NotImplementedError( "Method getFeeAmount not implemented." )
 
+	@staticmethod
+	def getTransactionID(self,row):
+		raise NotImplementedError( "Method getTransactionID not implemented." )
+
+	@staticmethod
+	def getReference(self,row):
+		raise NotImplementedError( "Method getReference not implemented." )
+
 	def getID( self ):
 		raise NotImplementedError( "Method getProviderID not implemented." )
 

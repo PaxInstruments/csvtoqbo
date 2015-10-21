@@ -39,6 +39,14 @@ class amazonpayments(AbstractProvider):
 	def getFeeAmount(self,row):
 		return row.get('Fees')
 
+	@staticmethod
+	def getTransactionID(self,row):
+		return row.get('Transaction ID')
+
+	@staticmethod
+	def getReference(self,row):
+		return row.get('Reference')
+
 	def getID(self):
 		return self.__providerID
 

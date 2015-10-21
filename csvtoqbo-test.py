@@ -45,8 +45,10 @@ class csvtoqboTest(unittest.TestCase):
 		txn_amount = '1.00'
 		txn_fee = '0.05'
 		name = 'TestBuy'
+		transaction_id = '12345'
+		reference = '67890'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, myQbo.getCount()), True)
 		self.assertEquals(myQbo.getCount(), 2)
 
 	#	Compare size of built document against file size known at development time
@@ -62,9 +64,11 @@ class csvtoqboTest(unittest.TestCase):
 		txn_amount = '1.00'
 		txn_fee = '0.05'
 		name = 'TestBuy'
+		transaction_id = '12345'
+		reference = '67890'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
-		self.assertEquals(len(myQbo.getDocument()), 1710)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, myQbo.getCount()), True)
+		self.assertEquals(len(myQbo.getDocument()), 1840)
 
 	#	Writing document of known size to file
 	def testWrite(self):
@@ -79,11 +83,13 @@ class csvtoqboTest(unittest.TestCase):
 		txn_amount = '1.00'
 		txn_fee = '0.05'
 		name = 'TestBuy'
+		transaction_id = '12345'
+		reference = '67890'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, myQbo.getCount()), True)
 		self.assertEquals(myQbo.Write('./csvtoqbo-test.qbo'), True)
 		statinfo = os.stat('./csvtoqbo-test.qbo')
-		self.assertEquals(statinfo.st_size, 2089)
+		self.assertEquals(statinfo.st_size, 2284)
 
 	#	Provider ID is set correctly on intialization
 	def testProviderID(self):
@@ -100,6 +106,8 @@ class csvtoqboTest(unittest.TestCase):
 						'To/From' : 'From',
 						'Amount' : '1.00',
 						'Fees' : '0.05',
+						'Transaction ID' : '12345',
+						'Reference' : '67890',
 						'Name' : 'TestBuy'}
 		self.assertEquals(myProvider.getStatus(myProvider,myDict), 'Completed')
 		self.assertEquals(myProvider.getDatePosted(myProvider,myDict), 'May 8, 2013')
@@ -107,6 +115,8 @@ class csvtoqboTest(unittest.TestCase):
 		self.assertEquals(myProvider.getToFrom(myProvider, myDict), 'From')
 		self.assertEquals(myProvider.getTxnAmount(myProvider, myDict), '1.00')
 		self.assertEquals(myProvider.getFeeAmount(myProvider, myDict), '0.05')
+		self.assertEquals(myProvider.getTransactionID(myProvider, myDict), '12345')
+		self.assertEquals(myProvider.getReference(myProvider, myDict), '67890')
 		self.assertEquals(myProvider.getTxnName(myProvider, myDict), 'TestBuy')
 
 	#	Test against command line with sample amazon test csv file

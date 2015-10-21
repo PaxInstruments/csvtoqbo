@@ -71,7 +71,7 @@ class qbo:
 		return self.__TRANSACTION_END
 	
 	#	method to validate paramters used to submit transactions
-	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
+	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, txnCount):
 
 		if str.lower(status) != 'completed':
 			#log status failure
@@ -104,17 +104,17 @@ class qbo:
 
 	#	Add transaction takes in param values uses the required formatting QBO transactions
 	#	and pushes to list
-	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
+	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, txnCount):
 		
 		try:
 			#	Validating param values prior to committing transaction
-			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount)
+			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, txnCount)
 		except:
 			raise Exception
 
 		# Add a transaction for the
 		if txn_fee != "$0.00":
-			self.addTransaction(status, date_posted, "Payment", "To", txn_fee, "$0.00", "AMAZON", txnCount)
+			self.addTransaction(status, date_posted, "Payment", "To", txn_fee, "$0.00", transaction_id, reference, "AMAZON", txnCount)
 
 
 		#	Construct QBO formatted transaction
@@ -134,7 +134,7 @@ class qbo:
 		rec_date = rec_date.strftime('%Y%m%d%H%M%S') + '.000[-5]'
 
 		dtposted = '						<DTPOSTED>' + rec_date
-		memo = '						<MEMO>' + str(txn_type)
+		memo = '						<MEMO>' + txn_type + " " + to_from_flag + " " + name + ". Amazon TID: " + transaction_id
 
 		if (str.lower(to_from_flag) == 'from') & (str.lower(txn_type) == 'payment'):
 			trtype = '						<TRNTYPE>CREDIT'

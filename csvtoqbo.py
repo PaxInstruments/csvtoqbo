@@ -70,10 +70,12 @@ for arg in sys.argv:
 					status = myProvider.getStatus(myProvider,row)
 					txn_amount = myProvider.getTxnAmount(myProvider,row)
 					txn_fee = myProvider.getFeeAmount(myProvider,row)
+					transaction_id = myProvider.getTransactionID(myProvider,row)
+					reference = myProvider.getReference(myProvider,row)
 
 					try:
                                                 #Add transaction to the qbo document
-                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
+                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, txnCount):
                                                         print('Transaction [' + str(txnCount) + '] added successfully!')
                                                         logging.info('Transaction [' + str(txnCount) + '] added successfully!')				
 

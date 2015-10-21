@@ -63,16 +63,17 @@ for arg in sys.argv:
 					sdata = str(row)
 
 					#read in values from row of csv file
-					status = myProvider.getStatus(myProvider,row)
 					date_posted = myProvider.getDatePosted(myProvider,row)
 					txn_type = myProvider.getTxnType(myProvider,row)
 					to_from_flag = myProvider.getToFrom(myProvider,row)
-					txn_amount = myProvider.getTxnAmount(myProvider,row)
 					name = myProvider.getTxnName(myProvider,row)
+					status = myProvider.getStatus(myProvider,row)
+					txn_amount = myProvider.getTxnAmount(myProvider,row)
+					txn_fee = myProvider.getFeeAmount(myProvider,row)
 
 					try:
                                                 #Add transaction to the qbo document
-                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
+                                                if myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
                                                         print('Transaction [' + str(txnCount) + '] added successfully!')
                                                         logging.info('Transaction [' + str(txnCount) + '] added successfully!')				
 

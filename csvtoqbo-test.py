@@ -32,7 +32,7 @@ class csvtoqboTest(unittest.TestCase):
 		self.assertEquals(myQbo.getTRANSACTION_START(), qboconst.TRANSACTION_START)
 		self.assertEquals(myQbo.getTRANSACTION_END(), qboconst.TRANSACTION_END)
 
-	#	Add a valid transaction through the qbo.addTransaction() method
+	#	Add a valid transaction through the qbo.addTransaction() method with fee
 	def testAddTransaction(self):
 		myQbo = None
 		myQbo = qbo.qbo()
@@ -43,10 +43,11 @@ class csvtoqboTest(unittest.TestCase):
 		txn_type = 'Payment'
 		to_from_flag = 'From'
 		txn_amount = '1.00'
+		txn_fee = '0.05'
 		name = 'TestBuy'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, myQbo.getCount()), True)
-		self.assertEquals(myQbo.getCount(), 1)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
+		self.assertEquals(myQbo.getCount(), 2)
 
 	#	Compare size of built document against file size known at development time
 	def testBuild(self):
@@ -59,10 +60,11 @@ class csvtoqboTest(unittest.TestCase):
 		txn_type = 'Payment'
 		to_from_flag = 'From'
 		txn_amount = '1.00'
+		txn_fee = '0.05'
 		name = 'TestBuy'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, myQbo.getCount()), True)
-		self.assertEquals(len(myQbo.getDocument()), 1332)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
+		self.assertEquals(len(myQbo.getDocument()), 1710)
 
 	#	Writing document of known size to file
 	def testWrite(self):
@@ -75,12 +77,13 @@ class csvtoqboTest(unittest.TestCase):
 		txn_type = 'Payment'
 		to_from_flag = 'From'
 		txn_amount = '1.00'
+		txn_fee = '0.05'
 		name = 'TestBuy'
 
-		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, myQbo.getCount()), True)
+		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, myQbo.getCount()), True)
 		self.assertEquals(myQbo.Write('./csvtoqbo-test.qbo'), True)
 		statinfo = os.stat('./csvtoqbo-test.qbo')
-		self.assertEquals(statinfo.st_size, 1522)
+		self.assertEquals(statinfo.st_size, 2089)
 
 	#	Provider ID is set correctly on intialization
 	def testProviderID(self):
@@ -96,12 +99,14 @@ class csvtoqboTest(unittest.TestCase):
 						'Type' : 'Payment',
 						'To/From' : 'From',
 						'Amount' : '1.00',
+						'Fees' : '0.05',
 						'Name' : 'TestBuy'}
 		self.assertEquals(myProvider.getStatus(myProvider,myDict), 'Completed')
 		self.assertEquals(myProvider.getDatePosted(myProvider,myDict), 'May 8, 2013')
 		self.assertEquals(myProvider.getTxnType(myProvider, myDict), 'Payment')
 		self.assertEquals(myProvider.getToFrom(myProvider, myDict), 'From')
 		self.assertEquals(myProvider.getTxnAmount(myProvider, myDict), '1.00')
+		self.assertEquals(myProvider.getFeeAmount(myProvider, myDict), '0.05')
 		self.assertEquals(myProvider.getTxnName(myProvider, myDict), 'TestBuy')
 
 	#	Test against command line with sample amazon test csv file

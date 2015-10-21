@@ -71,7 +71,7 @@ class qbo:
 		return self.__TRANSACTION_END
 	
 	#	method to validate paramters used to submit transactions
-	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
+	def validateTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
 
 		if str.lower(status) != 'completed':
 			#log status failure
@@ -104,13 +104,18 @@ class qbo:
 
 	#	Add transaction takes in param values uses the required formatting QBO transactions
 	#	and pushes to list
-	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount):
+	def addTransaction(self, status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount):
 		
 		try:
 			#	Validating param values prior to committing transaction
-			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, name, txnCount)
+			self.validateTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, name, txnCount)
 		except:
 			raise Exception
+
+		# Add a transaction for the
+		if txn_fee != "$0.00":
+			self.addTransaction(status, date_posted, "Payment", "To", txn_fee, "$0.00", "AMAZON", txnCount)
+
 
 		#	Construct QBO formatted transaction
 		transaction = ""

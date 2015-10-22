@@ -16,6 +16,8 @@ from datetime import datetime
 import logging
 import qboconst
 
+AMAZON_FEE_NAME = "Amazon Payments Inc."
+
 class qbo:
 
 	#	Holds a list of valid transactions via the addTransaction() method
@@ -82,9 +84,9 @@ class qbo:
 		#	logging.info("Transaction posted date [" + date_posted + "] invalid.")
 		#	raise Exception("Transaction posted date [" + date_posted + "] invalid.")
 
-		if str.lower(txn_type) not in ('payment','refund','withdrawal', 'withdraw funds'):
-			logging.info("Transaction [" + str(txnCount)  + "] type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Withdraw Funds', or 'Withdrawal'.")
-			raise Exception("Transaction type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Withdraw Funds', or 'Withdrawal'.")
+		if str.lower(txn_type) not in ('payment','refund','fee','withdrawal', 'withdraw funds'):
+			logging.info("Transaction [" + str(txnCount)  + "] type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Fee', 'Withdraw Funds', or 'Withdrawal'.")
+			raise Exception("Transaction type [" + str(txn_type) + "] not 'Payment', 'Refund', 'Fee', 'Withdraw Funds', or 'Withdrawal'.")
 
 		if str.lower(to_from_flag) not in ('to', 'from'):
 			logging.info("Transaction [" + str(txnCount)  + "] 'To/From' field [" + to_from_flag + "] invalid.")
@@ -114,7 +116,7 @@ class qbo:
 
 		# Add a transaction for the
 		if txn_fee != "$0.00":
-			self.addTransaction(status, date_posted, "Payment", "To", txn_fee, "$0.00", transaction_id, reference, "AMAZON", txnCount)
+			self.addTransaction(status, date_posted, "Fee", "To", txn_fee, "$0.00", transaction_id, reference, name, txnCount)
 
 
 		#	Construct QBO formatted transaction
@@ -134,21 +136,25 @@ class qbo:
 		rec_date = rec_date.strftime('%Y%m%d%H%M%S') + '.000[-5]'
 
 		dtposted = '						<DTPOSTED>' + rec_date
-		memo = '						<MEMO>' + txn_type + " " + to_from_flag + " " + name + ". Amazon TID: " + transaction_id
+		if (str.lower(txn_type) == 'fee'):
+			memo = '						<MEMO>' + name + " " + txn_type + " " + to_from_flag + " " + AMAZON_FEE_NAME + ". Amazon TID: " + transaction_id
+			trname = '						<NAME>' + str(AMAZON_FEE_NAME)[:32] # This field limited to 32 characters
+		else:
+			memo = '						<MEMO>' + txn_type + " " + to_from_flag + " " + name + ". Amazon TID: " + transaction_id
+			trname = '						<NAME>' + str(name)[:32] # This field limited to 32 characters
 
 		if (str.lower(to_from_flag) == 'from') & (str.lower(txn_type) == 'payment'):
 			trtype = '						<TRNTYPE>CREDIT'
-		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','withdrawal','withdraw funds')):
+		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','fee','withdrawal','withdraw funds')):
 			trtype = '						<TRNTYPE>DEBIT'
 
 		if (str.lower(to_from_flag) == 'from') & (str.lower(txn_type) == 'payment'):
 			tramt = '						<TRNAMT>' + str(txn_amount).replace('$','').replace('(','').replace(')','')
-		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','withdrawal','withdraw funds')):
+		elif (str.lower(to_from_flag) == 'to') & (str.lower(txn_type) in ('payment','refund','fee','withdrawal','withdraw funds')):
 			tramt = '						<TRNAMT>-' + str(txn_amount).replace('$','').replace('(','').replace(')','')
 		
 		#tramt = '<TRNAMT>' + str(txn_amount).replace('$','')
                 
-		trname = '						<NAME>' + str(name)[:32] # This field limited to 32 characters
 		fitid = '						<FITID>' + rec_date + str(1000+len(self.__transactions))[1:]
 
 		transaction = ("" + self.__TRANSACTION_START + "\n"

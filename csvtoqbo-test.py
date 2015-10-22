@@ -68,7 +68,7 @@ class csvtoqboTest(unittest.TestCase):
 		reference = '67890'
 
 		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, myQbo.getCount()), True)
-		self.assertEquals(len(myQbo.getDocument()), 1840)
+		self.assertEquals(len(myQbo.getDocument()), 1896)
 
 	#	Writing document of known size to file
 	def testWrite(self):
@@ -89,7 +89,7 @@ class csvtoqboTest(unittest.TestCase):
 		self.assertEquals(myQbo.addTransaction(status, date_posted, txn_type, to_from_flag, txn_amount, txn_fee, transaction_id, reference, name, myQbo.getCount()), True)
 		self.assertEquals(myQbo.Write('./csvtoqbo-test.qbo'), True)
 		statinfo = os.stat('./csvtoqbo-test.qbo')
-		self.assertEquals(statinfo.st_size, 2284)
+		self.assertEquals(statinfo.st_size, 2368)
 
 	#	Provider ID is set correctly on intialization
 	def testProviderID(self):
